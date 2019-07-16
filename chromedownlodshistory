@@ -1,0 +1,26 @@
+import sqlite3, datetime
+def fixDate(timestamp):
+    epoch_start = datetime.datetime(1601,1,1)
+    deltaA = datetime.timedelta(microseconds=int(timestamp))
+    return epoch_start + deltaA
+
+selectStatement = 'SELECT target_path, referrer, start_time, end_time, received_bytes FROM downloads;'
+historyFile = 'C:\\Users\\ENTERPCNAME\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\History'
+c = sqlite3.connect(historyFile)
+for row in c.execute(selectStatement):
+    print("Download:",row[0].encode('utf-8'))
+    print("\tFrom:",str(row[1]))
+    print("\tStarted:",str(fixDate(row[2])))
+    print("\tFinished:",str(fixDate(row[3])))
+    print("\tSize:",str(row[4]))
+
+write_file=open("chromedownloadhistory.txt","w")
+write_file.write("User downloads history extracted: \n\n")
+for row in c.execute(selectStatement):
+    write_file.write("Download:" + str(row[0]) + "\n")
+    write_file.write("\tFrom:" + str(row[1]) + "\n")
+    write_file.write("\tStarted:" + str(fixDate(row[2])) + "\n")
+    write_file.write("\tFinished:" + str(fixDate(row[3])) + "\n")
+    write_file.write("\tSize:" + str(row[4]) + "\n")
+    write_file.write("\n\n")
+        
